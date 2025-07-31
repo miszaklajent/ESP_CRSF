@@ -71,6 +71,25 @@ typedef struct __attribute__((packed))
     unsigned remaining : 8; // %
 } crsf_battery_t;
 
+/**
+ * @brief struct for link quality telemetry
+ * 
+ * @param up_rssi_ant1 Uplink RSSI Antenna 1 (dBm * -1)
+ * @param up_rssi_ant2 Uplink RSSI Antenna 2 (dBm * -1)
+ * @param up_link_quality Uplink Package success rate / Link quality (%)
+ * @param up_snr Uplink SNR (dB)
+ * @param active_antenna number of currently best antenna
+ * @param rf_profile enum {4fps = 0 , 50fps, 150fps}
+ * @param up_rf_power enum {0mW = 0, 10mW, 25mW, 100mW,
+ *                     500mW, 1000mW, 2000mW, 250mW, 50mW}
+ * @param down_rssi Downlink RSSI (dBm * -1)
+ * @param down_link_quality Downlink Package success rate / Link quality (%)
+ * @param down_snr Downlink SNR (dB)
+ * 
+ * @note up link is the signal from the tx to rx
+ *       (so up_link_quality would be % of packets received by the receiver),
+ *       down link is the other way around
+ */
 typedef struct __attribute__((packed))
 {
     uint8_t     up_rssi_ant1;       // Uplink RSSI Antenna 1 (dBm * -1)
@@ -138,6 +157,12 @@ void CRSF_init(crsf_config_t *config);
  */
 void CRSF_receive_channels(crsf_channels_t *channels);
 
+
+/**
+ * @brief copy latest link data received to the pointer
+ * 
+ * @param link pointer to receiver buffer
+ */
 void CRSF_receive_link(crsf_link_t *link);
 
 /**
