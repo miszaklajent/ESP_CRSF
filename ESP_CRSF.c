@@ -37,6 +37,7 @@ SemaphoreHandle_t xMutex;
 static int uart_num = 1;
 static QueueHandle_t uart_queue;
 crsf_channels_t received_channels = {0};
+crsf_link_t received_link = {0};
 crsf_battery_t received_battery = {0};
 
 
@@ -71,6 +72,12 @@ static void rx_task(void *arg)
                     received_channels = *(crsf_channels_t*)payload;
                     xSemaphoreGive(xMutex);
 
+                }
+
+                else if (type == CRSF_TYPE_LINK){
+                    xSemaphoreTake(xMutex, portMAX_DELAY);
+                    received_link = *(crsf_link_t*)payload;
+                    xSemaphoreGive(xMutex);
                 }
             }
         }
@@ -115,6 +122,14 @@ void CRSF_receive_channels(crsf_channels_t *channels)
     *channels = received_channels;
     xSemaphoreGive(xMutex);
 }
+
+void CRSF_receive_link(crsf_link_t *link)
+{
+    xSemaphoreTake(xMutex, portMAX_DELAY);
+    *link = received_link;
+    xSemaphoreGive(xMutex);
+}
+
 /**
  * @brief function sends payload to a destination using uart
  * 

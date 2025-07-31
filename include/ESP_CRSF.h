@@ -71,6 +71,22 @@ typedef struct __attribute__((packed))
     unsigned remaining : 8; // %
 } crsf_battery_t;
 
+typedef struct __attribute__((packed))
+{
+    uint8_t     up_rssi_ant1;       // Uplink RSSI Antenna 1 (dBm * -1)
+    uint8_t     up_rssi_ant2;       // Uplink RSSI Antenna 2 (dBm * -1)
+    uint8_t     up_link_quality;    // Uplink Package success rate / Link quality (%)
+    int8_t      up_snr;             // Uplink SNR (dB)
+    uint8_t     active_antenna;     // number of currently best antenna
+    uint8_t     rf_profile;         // enum {4fps = 0 , 50fps, 150fps}
+    uint8_t     up_rf_power;        // enum {0mW = 0, 10mW, 25mW, 100mW,
+                                    // 500mW, 1000mW, 2000mW, 250mW, 50mW}
+    uint8_t     down_rssi;          // Downlink RSSI (dBm * -1)
+    uint8_t     down_link_quality;  // Downlink Package success rate / Link quality (%)
+    int8_t      down_snr;           // Downlink SNR (dB)
+} crsf_link_t;
+
+
 /**
  * @brief struct for GPS data telemetry
  * 
@@ -94,6 +110,7 @@ typedef struct __attribute__((packed))
 
 typedef enum
 {
+    CRSF_TYPE_LINK = 0x14,
     CRSF_TYPE_CHANNELS = 0x16,
     CRSF_TYPE_BATTERY = 0x08,
     CRSF_TYPE_GPS = 0x02,
@@ -120,6 +137,8 @@ void CRSF_init(crsf_config_t *config);
  * @param channels pointer to receiver buffer
  */
 void CRSF_receive_channels(crsf_channels_t *channels);
+
+void CRSF_receive_link(crsf_link_t *link);
 
 /**
  * @brief send battery data telemetry
